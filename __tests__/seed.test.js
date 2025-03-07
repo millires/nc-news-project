@@ -30,7 +30,6 @@ describe('seed', () => {
                     AND column_name = 'slug';`
         )
         .then(({ rows: [column] }) => {
-          console.log(column);
           expect(column.column_name).toBe('slug');
           expect(column.data_type).toBe('character varying');
         });
@@ -77,6 +76,7 @@ describe('seed', () => {
         });
     });
   });
+
   describe('users table', () => {
     test('users table exists', () => {
       return db

@@ -1,5 +1,5 @@
 const db = require("../connection")
-const format = require('pg-format');
+const format = require('pg-format')
 const { convertTimestampToDate } = require("./utils");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
@@ -52,10 +52,10 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         })
         .then((users) => {
             const formattedArticlesData = articleData.map((article) =>
-                [article.title, article.topic, article.author, article.body, convertTimestampToDate( article).created_at, article.votes, article.article_img_url]
+                [article.title, article.topic, article.author, article.body, convertTimestampToDate( article).created_at, article.votes || 0, article.article_img_url]
             )
             const sql = format(`INSERT INTO articles(title, topic, author,
-                                                body, created_at, votes, article_img_url)
+                                   body, created_at, votes, article_img_url)
                              VALUES
                              %L
                              RETURNING *;`, formattedArticlesData);
@@ -65,21 +65,64 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
             const articlesByID = Object.assign({}, ...(articles.rows.map((article) =>
                 ({ [article.title]: article.article_id })))
             );
-
             const formattedCommentData = commentData.map((comment) =>
-                [articlesByID[comment.article_title], comment.body, comment.votes, comment.author, convertTimestampToDate(comment).created_at]
+                [articlesByID[comment.article_title], comment.body, comment.votes || 0, comment.author, convertTimestampToDate(comment).created_at]
             )
-            const sql = format(`INSERT INTO comments(article_id, body, votes,
-                                                author, created_at)
+            const sql = format(`INSERT INTO comments(article_id, body, votes, author, created_at)
                              VALUES
                              %L
                              RETURNING *;`, formattedCommentData);
             return db.query(sql)
         })
-
-
+        .then(() => {
+            //Get all of the users
+            const sql = `SELECT * FROM users;`
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            console.log(rows)
+        })
+        .then(() => {
+            //Get all of the articles where the topic is coding
+            const sql = `SELECT * FROM articles WHERE topic = 'coding';`
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            console.log(rows)
+        })
+        .then(() => {
+            //Get all of the comments where the votes are less than zero
+            const sql = `SELECT * FROM comments WHERE votes < 0;`
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            console.log(rows)
+        })
+        .then(() => {
+            //Get all of the topics
+            const sql = `SELECT * FROM topics;`
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            console.log(rows)
+        })
+        .then(() => {
+            //Get all of the articles by user grumpy19
+            const sql = `SELECT * FROM articles WHERE user= 'grumpy19';`
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            console.log(rows)
+        })
+        .then(() => {
+            //Get all of the comments that have more than 10 votes
+            const sql = `SELECT * FROM comments WHERE votes > 10;`
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            console.log(rows)
+        })
 };
-
 function createTopics() {
     //Create Topics table with columns:
         //slug - primary key (a slug is a term used in publishing to identify an article)
