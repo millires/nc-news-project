@@ -1,5 +1,7 @@
 const endpointsJson = require("../endpoints.json");
 const request = require("supertest")
+const sorted = require("jest-sorted")
+
 /* Set up your test imports here */
 const app = require("../app.js")
 
@@ -42,7 +44,6 @@ describe("GET /api/topics", () => {
             });
     });
 });
-
 describe("GET /api/articles/:article_id", () => {
     test("200: gets an article by its ID", () => {
         return request(app)
@@ -73,7 +74,6 @@ describe("GET /api/articles/:article_id", () => {
             });
 
     });
-
     test("404: requests an article when ID does not exist return 'id cannot be found'", () => {
         return request(app)
             .get("/api/articles/300")
@@ -93,5 +93,47 @@ describe("GET /api/articles/:article_id", () => {
     });
 
 });
+describe("GET /api/articles", () => {
+    test("200: gets all articles", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles
+                articles.forEach((article) => {
+                    const { author,
+                        title,
+                        article_id,
+                        topic,
+                        created_at,
+                        votes,
+                        article_img_url,
+                        comment_count } = article
 
+                    expect(typeof author).toBe("string");
+                    expect(typeof title).toBe("string");
+                    expect(typeof article_id).toBe("number");
+                    expect(typeof topic).toBe("string");
+                    expect(typeof created_at).toBe("string");
+                    expect(typeof votes).toBe("number");
+                    expect(typeof article_img_url).toBe("string");
+                    expect(typeof comment_count).toBe("number");
 
+                })
+            });
+
+    });
+
+    test("200: gets all articles sorted by date created", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles
+
+                expect(articles).toBeSorted()
+                expect(articles).toBeSortedBy('created_at', { descending: true })
+            });
+    });
+
+});
