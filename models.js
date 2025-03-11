@@ -1,5 +1,4 @@
 const db = require("./db/connection");
-
 const endpoints = require("./endpoints.json")
 
 const fetchAPI = () => {
@@ -18,14 +17,12 @@ const fetchArticleByID = (articleID) => {
     return db
         .query(`SELECT * FROM articles WHERE article_id = $1;`, [articleID])
         .then(({ rows }) => {
-            console.log(!rows[0])
             if (!rows[0]) {
                 return Promise.reject({
                     status: 404,
                     msg: "id cannot be found",
                 });
             }
-
             return rows
         })
 }
