@@ -74,54 +74,54 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
                              RETURNING *;`, formattedCommentData);
             return db.query(sql)
         })
-        .then(() => {
-            //Get all of the users
-            const sql = `SELECT * FROM users;`
-            return db.query(sql)
-        })
-        .then(({ rows }) => {
-            console.log(rows)
-        })
-        .then(() => {
-            //Get all of the articles where the topic is coding
-            const sql = `SELECT * FROM articles WHERE topic = 'coding';`
-            return db.query(sql)
-        })
-        .then(({ rows }) => {
-            console.log(rows)
-        })
-        .then(() => {
-            //Get all of the comments where the votes are less than zero
-            const sql = `SELECT * FROM comments WHERE votes < 0;`
-            return db.query(sql)
-        })
-        .then(({ rows }) => {
-            console.log(rows)
-        })
-        .then(() => {
-            //Get all of the topics
-            const sql = `SELECT * FROM topics;`
-            return db.query(sql)
-        })
-        .then(({ rows }) => {
-            console.log(rows)
-        })
-        .then(() => {
-            //Get all of the articles by user grumpy19
-            const sql = `SELECT * FROM articles WHERE user= 'grumpy19';`
-            return db.query(sql)
-        })
-        .then(({ rows }) => {
-            console.log(rows)
-        })
-        .then(() => {
-            //Get all of the comments that have more than 10 votes
-            const sql = `SELECT * FROM comments WHERE votes > 10;`
-            return db.query(sql)
-        })
-        .then(({ rows }) => {
-            console.log(rows)
-        })
+//        .then(() => {
+//            //Get all of the users
+//            const sql = `SELECT * FROM users;`
+//            return db.query(sql)
+//        })
+//        .then(({ rows }) => {
+//            console.log(rows)
+//        })
+//        .then(() => {
+//            //Get all of the articles where the topic is coding
+//            const sql = `SELECT * FROM articles WHERE topic = 'coding';`
+//            return db.query(sql)
+//        })
+//        .then(({ rows }) => {
+//            console.log(rows)
+//        })
+//        .then(() => {
+//            //Get all of the comments where the votes are less than zero
+//            const sql = `SELECT * FROM comments WHERE votes < 0;`
+//            return db.query(sql)
+//        })
+//        .then(({ rows }) => {
+//            console.log(rows)
+//        })
+//        .then(() => {
+//            //Get all of the topics
+//            const sql = `SELECT * FROM topics;`
+//            return db.query(sql)
+//        })
+//        .then(({ rows }) => {
+//            console.log(rows)
+//        })
+//        .then(() => {
+//            //Get all of the articles by user grumpy19
+//            const sql = `SELECT * FROM articles WHERE user= 'grumpy19';`
+//            return db.query(sql)
+//        })
+//        .then(({ rows }) => {
+//            console.log(rows)
+//        })
+//        .then(() => {
+//            //Get all of the comments that have more than 10 votes
+//            const sql = `SELECT * FROM comments WHERE votes > 10;`
+//            return db.query(sql)
+//        })
+//        .then(({ rows }) => {
+//            console.log(rows)
+//        })
 };
 function createTopics() {
     //Create Topics table with columns:
