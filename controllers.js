@@ -1,7 +1,8 @@
 const { response } = require("./app");
 
 const {
-    fetchAPI, fetchTopics, fetchArticleByID, fetchArticles
+    fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
+    fetchCommentsForArticle
 } = require("./models");
 
 
@@ -36,4 +37,22 @@ const getArticles = (request, response) => {
         })
 }
 
-module.exports = { getAPI, getTopics, getArticleByID, getArticles };
+const getCommentsForArticle = (request, response, next) => {
+    console.log('getCommentsForArticle ....')
+
+    const articleID = request.params.article_id
+    fetchCommentsForArticle(articleID)
+        .then((rows) => {
+            response.status(200).send({comments: rows})
+
+        })
+        .catch((error) => {
+            next(error);
+        })
+
+}
+
+module.exports = {
+    getAPI, getTopics, getArticleByID, getArticles,
+    getCommentsForArticle
+};

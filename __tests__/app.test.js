@@ -91,7 +91,6 @@ describe("GET /api/articles/:article_id", () => {
                 expect(body.msg).toBe("bad request");
             });
     });
-
 });
 describe("GET /api/articles", () => {
     test("200: gets all articles", () => {
@@ -123,7 +122,6 @@ describe("GET /api/articles", () => {
             });
 
     });
-
     test("200: gets all articles sorted by date created", () => {
         return request(app)
             .get("/api/articles")
@@ -136,4 +134,59 @@ describe("GET /api/articles", () => {
             });
     });
 
+});
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200: returns an array of comments for the given article_id", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const comments = body.comments
+                comments.forEach((comment) => {
+                    const { comment_id,
+                        article_id,
+                        body,
+                        votes,
+                        author,
+                        created_at,
+                        } = comment
+
+                    expect(typeof comment_id).toBe("number");
+                    expect(typeof article_id).toBe("number");
+                    expect(typeof body).toBe("string");
+                    expect(typeof votes).toBe("number");
+                    expect(typeof author).toBe("string");
+                    expect(typeof created_at).toBe("string");
+ 
+                })
+            });
+    });
+    test("200: gets all articles sorted by date created", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const comments = body.comments
+
+                expect(comments).toBeSorted()
+                expect(comments).toBeSortedBy('created_at', { descending: true })
+            });
+    });
+    test("404: requests an comments when article ID does not exist return 'id cannot be found'", () => {
+        return request(app)
+            .get("/api/articles/199/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("id cannot be found");
+
+            })
+    });
+    test("400: responds with message 'bad request' if invalid data type", () => {
+        return request(app)
+            .get("/api/articles/xyz/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request");
+            });
+    });
 });
