@@ -31,8 +31,6 @@ const fetchArticleByID = (articleID) => {
 };
 
 const fetchArticles = () => {
-    console.log('fetchArticles ....')
-
     return db
         .query(`SELECT author, title, article_id, topic, 
                         created_at, votes, article_img_url
@@ -57,8 +55,6 @@ const fetchArticles = () => {
 };
 
 const fetchCommentsForArticle = (articleID) => {
-    console.log('fetchCommentsForArticle ....')
-
     return db
         .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`, [articleID])
         .then(({ rows }) => {
@@ -73,8 +69,6 @@ const fetchCommentsForArticle = (articleID) => {
 };
 
 const addCommentsForArticle = (articleID, data) => {
-    console.log('fetchCommentsForArticle ....')
-
     return fetchArticleByID(articleID)
         .then((rows) => {
             //const article = rows[0]
@@ -90,7 +84,21 @@ const addCommentsForArticle = (articleID, data) => {
         })
 };
 
+const updateArticleVotes = (id, inc_vote) => {
+    return db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;', [inc_vote, id])
+        .then(({ rows }) => {
+            if (!rows[0]) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "not found",
+                });
+            }
+            return rows
+        })
+};
+
 module.exports = {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
-    fetchCommentsForArticle, addCommentsForArticle
+    fetchCommentsForArticle, addCommentsForArticle,
+    updateArticleVotes
 };
