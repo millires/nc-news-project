@@ -79,11 +79,11 @@ describe("GET /api/articles/:article_id", () => {
             .get("/api/articles/300")
             .expect(404)
             .then(({ body }) => {
-                expect(body.msg).toBe("id cannot be found");
+                expect(body.msg).toBe("not found");
 
             })
     });
-    test("400: responds with message 'bad request' if invalid data type", () => {
+    test("400: responds with message 'bad request' if invalid id data type", () => {
         return request(app)
             .get("/api/articles/banana")
             .expect(400)
@@ -190,3 +190,71 @@ describe("GET /api/articles/:article_id/comments", () => {
             });
     });
 });
+describe("POST /api/articles/:article_id/comments", () => {
+    test("200: returns an array with the comment added for the given article_id", () => {
+        return request(app)
+            .post("/api/articles/1/comments")
+            .send({
+                username: 'butter_bridge',
+                body: 'great article! ...'
+            })
+            .expect(200)
+            .then((res) => {
+                const { comment_id,
+                article_id,
+                body,
+                votes,
+                author,
+                created_at,
+                } = res.body.addedComment
+
+                expect(typeof comment_id).toBe("number");
+                expect(article_id).toBe(1);
+                expect(body).toBe('great article! ...');
+                expect(votes).toBe(0);
+                expect(author).toBe("butter_bridge");
+                expect(typeof created_at).toBe("string");
+
+            });
+    });
+    test("404: add a comment with a non existing article ID returns 'not be found'", () => {
+        return request(app)
+            .post("/api/articles/199/comments")
+            .send({
+                username: 'butter_bridge',
+                body: 'great article! ...'
+            })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("not found");
+            })
+    });
+    test("404: add a comment article ID returns not matching author 'not be found'", () => {
+        return request(app)
+            .post("/api/articles/199/comments")
+            .send({
+                username: 'kamel',
+                body: 'great article! ...'
+            })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("not found");
+            })
+    });
+    test("404: add a comment with an empty body returns 'id cannot be found'", () => {
+        return request(app)
+            .post("/api/articles/199/comments")
+            .send({
+                username: 'butter_bridge',
+                body: ''
+            })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("not found");
+
+            })
+    });
+
+});
+
+

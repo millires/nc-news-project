@@ -6,12 +6,17 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
     }
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [ "author", "topic", "sort_by", "order" ],
     "exampleResponse": {
       "articles": [
         {
@@ -21,9 +26,62 @@
           "body": "Text from the article..",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
+          "article_img_url": "url to article image",
           "comment_count": 6
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves articles with requested ID",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "author": "weegembump",
+          "title": "Seafood substitutions are increasing",
+          "article_id": "requested ID",
+          "body": "Text from the article..",
+          "topic": "cooking",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "article_img_url": "url to article image"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves articles all comments for the article with requested ID ordered with the most recent comments first",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": "1",
+          "votes": 0,
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "article_id": "requested ID"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "add a comment for an article with specified ID",
+    "queries": [],
+    "POST body": "{username: \"butter_bridge\" ,body: \"great article! ...\"}",
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": "1",
+          "votes": 0,
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "article_id": "requested ID"
+        }
+      ]
+    }
   }
+
 }

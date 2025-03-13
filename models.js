@@ -1,4 +1,6 @@
 const db = require("./db/connection");
+const format = require('pg-format')
+
 const { forEach } = require("./db/data/test-data/articles");
 const endpoints = require("./endpoints.json")
 
@@ -21,12 +23,12 @@ const fetchArticleByID = (articleID) => {
             if (!rows[0]) {
                 return Promise.reject({
                     status: 404,
-                    msg: "id cannot be found",
+                    msg: "not found",
                 });
             }
             return rows
         })
-}
+};
 
 const fetchArticles = () => {
     console.log('fetchArticles ....')
@@ -52,7 +54,7 @@ const fetchArticles = () => {
                     return articles
                 })
         })
-}
+};
 
 const fetchCommentsForArticle = (articleID) => {
     console.log('fetchCommentsForArticle ....')
@@ -68,11 +70,27 @@ const fetchCommentsForArticle = (articleID) => {
             }
             return rows
         })
+};
 
+const addCommentsForArticle = (articleID, data) => {
+    console.log('fetchCommentsForArticle ....')
 
-}
+    return fetchArticleByID(articleID)
+        .then((rows) => {
+            //const article = rows[0]
+            const formattedCommentData = [Number(articleID), data.body, data.username]
+            const sql = format(`INSERT INTO comments(article_id, body, author)
+                        VALUES
+                        %L
+                        RETURNING *;`, [formattedCommentData])
+            return db.query(sql)
+        })
+        .then(({ rows }) => {
+            return rows
+        })
+};
 
 module.exports = {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
-    fetchCommentsForArticle
+    fetchCommentsForArticle, addCommentsForArticle
 };
