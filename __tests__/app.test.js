@@ -257,4 +257,81 @@ describe("POST /api/articles/:article_id/comments", () => {
 
 });
 
+describe("PATCH /api/articles/:article_id", () => {
+    test("200: update article's votes for article_id = 1 by 1 and responds with the updated article", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then((res) => {
+                const { author,
+                    title,
+                    article_id,
+                    body,
+                    topic,
+                    created_at,
+                    votes,
+                    article_img_url } = res.body.article
+
+                expect(author).toBe("butter_bridge");
+                expect(article_id).toBe(1);
+                expect(typeof body).toBe('string');
+                expect(typeof topic).toBe("string")
+                expect(typeof created_at).toBe("string");
+                expect(votes).toBe(101);
+                expect(typeof article_img_url).toBe("string");
+            });
+    });
+    test("200: decrese article's votes for article_id = 1 by 10 and responds with the updated article", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: -10 })
+            .expect(200)
+            .then((res) => {
+                const { author,
+                    title,
+                    article_id,
+                    body,
+                    topic,
+                    created_at,
+                    votes,
+                    article_img_url } = res.body.article
+
+                expect(author).toBe("butter_bridge");
+                expect(article_id).toBe(1);
+                expect(typeof body).toBe('string');
+                expect(typeof topic).toBe("string")
+                expect(typeof created_at).toBe("string");
+                expect(votes).toBe(90);
+                expect(typeof article_img_url).toBe("string");
+            });
+    });
+    test("404: update article's votes for a non existing article ID returns 'not be found'", () => {
+        return request(app)
+            .patch("/api/articles/199")
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("not found");
+            })
+    });
+    test("400: responds with message 'bad request' if invalid data type for ID", () => {
+        return request(app)
+            .patch("/api/articles/xyz")
+            .send({ inc_votes: 1 })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request");
+            });
+    });
+    test("400: responds with message 'bad request' if invalid data type for inc_votes", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: 'a' })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request");
+            });
+    });
+});
 
