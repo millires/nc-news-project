@@ -254,9 +254,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 
             })
     });
-
 });
-
 describe("PATCH /api/articles/:article_id", () => {
     test("200: update article's votes for article_id = 1 by 1 and responds with the updated article", () => {
         return request(app)
@@ -335,3 +333,22 @@ describe("PATCH /api/articles/:article_id", () => {
     });
 });
 
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: delete the given comment by comment_id", () => {
+        return request(app)
+            .delete("/api/comments/1")
+            .expect(204)
+            .then(({body}) => {
+                expect(body).toEqual({});
+            });
+    });
+    test("400: responds with message 'bad request' if invalid data type for ID", () => {
+        return request(app)
+            .delete("/api/comments/xyz")
+            .send({ inc_votes: 1 })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request");
+            });
+    });
+});
