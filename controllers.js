@@ -2,11 +2,11 @@ const { response } = require("./app");
 
 const {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
-    fetchCommentsForArticle
+    fetchCommentsForArticle, addCommentsForArticle
 } = require("./models");
 
 
-const getAPI = (request, response) => {
+const getAPI = ( _, response) => {
     const endpoints = fetchAPI()
     response.status(200).send({ endpoints });
 };
@@ -52,7 +52,25 @@ const getCommentsForArticle = (request, response, next) => {
 
 }
 
+const postCommentsForArticle = (request, response, next) => {
+    console.log('postCommentsForArticle ....')
+
+    const data = request.body
+    const articleID = request.params.article_id
+    addCommentsForArticle(articleID, data)
+        .then((comment) => {
+            response.status(200).send({ addedComment: comment[0] })
+
+        })
+        .catch((error) => {
+            next(error);
+        })
+
+
+
+}
+
 module.exports = {
     getAPI, getTopics, getArticleByID, getArticles,
-    getCommentsForArticle
+    getCommentsForArticle, postCommentsForArticle
 };
