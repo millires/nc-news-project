@@ -4,7 +4,7 @@ const { response } = require("./app");
 const {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
     fetchCommentsForArticle, addCommentsForArticle,
-    updateArticleVotes, removeComment
+    updateArticleVotes, removeComment, fetchUsers
 } = require("./models");
 
 
@@ -84,9 +84,16 @@ const deleteComment = (request, response, next) => {
         })
 };
 
+const getUsers = (request, response, next) => {
+
+    fetchUsers()
+        .then((rows) => {
+            response.status(200).send({users: rows})
+    })
+};
 
 module.exports = {
     getAPI, getTopics, getArticleByID, getArticles,
     getCommentsForArticle, postCommentsForArticle,
-    patchArticleVotes, deleteComment
+    patchArticleVotes, deleteComment, getUsers
 };

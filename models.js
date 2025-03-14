@@ -105,8 +105,18 @@ const removeComment = (id) => {
         })
 };
 
+const fetchUsers = () => {
+
+    return db.query('SELECT * FROM users;')
+        .then(({ rows }) => {
+            return rows
+        })
+
+
+};
+
 module.exports = {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
     fetchCommentsForArticle, addCommentsForArticle,
-    updateArticleVotes, removeComment
+    updateArticleVotes, removeComment, fetchUsers
 };
