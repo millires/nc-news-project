@@ -4,8 +4,9 @@ const { response } = require("./app");
 const {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
     fetchCommentsForArticle, addCommentsForArticle,
-    updateArticleVotes, removeComment, fetchUsers
+    updateArticleVotes, removeComment, fetchUsers, fetchArticlesSortedBy
 } = require("./models");
+const { sort } = require("./db/data/test-data/users");
 
 
 const getAPI = ( _, response) => {
@@ -32,8 +33,14 @@ const getArticleByID = (request, response, next) => {
 };
 
 const getArticles = (request, response) => {
-    fetchArticles()
+    console.log('getArticles .............')
+    console.log(request.params)
+    console.log(request.query)
+    const { sortby, orderby }= request.query
+    console.log(!sortby, !!orderby)
+    fetchArticles(sortby, orderby)
         .then((rows) => {
+            articles: rows
             response.status(200).send({ articles: rows })
         })
 };
@@ -84,7 +91,7 @@ const deleteComment = (request, response, next) => {
         })
 };
 
-const getUsers = (request, response, next) => {
+const getUsers = (request, response) => {
 
     fetchUsers()
         .then((rows) => {
@@ -92,8 +99,20 @@ const getUsers = (request, response, next) => {
     })
 };
 
+const getArticlesSortedBy = (request, response) => {
+    console.log('getArticlesSortedBy .............')
+    const sortBy = request.query
+    console.log(sortBy)
+
+    fetchArticlesSortedBy(sortBy)
+
+
+};
+
+
 module.exports = {
     getAPI, getTopics, getArticleByID, getArticles,
     getCommentsForArticle, postCommentsForArticle,
-    patchArticleVotes, deleteComment, getUsers
+    patchArticleVotes, deleteComment, getUsers,
+    getArticlesSortedBy
 };

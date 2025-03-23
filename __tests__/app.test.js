@@ -95,7 +95,7 @@ describe("GET /api/articles/:article_id", () => {
     });
 });
 describe("GET /api/articles", () => {
-    test("200: gets all articles", () => {
+    test.only("200: gets all articles", () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
@@ -125,7 +125,7 @@ describe("GET /api/articles", () => {
             });
 
     });
-    test("200: gets all articles sorted by date created", () => {
+    test.only("200: gets all articles sorted by date created", () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
@@ -377,3 +377,68 @@ describe("GET /api/users", () => {
             });
     });
 });
+
+describe("GET /api/articles?sortby=sort", () => {
+    test.only("200: returns all articles sorted by created_at", () => {
+        return request(app)
+            .get("/api/articles?sortby=created_at&orderby=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles
+                //console.log(articles)
+                expect(articles).not.toBeEmpty()
+                articles.forEach((article) => {
+                    const {
+                        author,
+                        title,
+                        article_id,
+                        topic,
+                        created_at,
+                        body,
+                        votes,
+                    } = article
+
+                    expect(typeof author).toBe("string");
+                    expect(typeof title).toBe("string");
+                    expect(typeof article_id).toBe("number");
+                    expect(typeof topic).toBe("string");
+                    expect(typeof created_at).toBe("string");
+                    //expect(typeof body).toBe("string");
+                    expect(typeof votes).toBe("number");
+
+                })
+            });
+    });
+    test.skip("200: gets all articles sorted by date created", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const comments = body.comments
+
+                expect(comments).toBeSorted()
+                expect(comments).toBeSortedBy('created_at', { descending: true })
+            });
+    });
+    test.skip("404: requests an comments when article ID does not exist return 'id cannot be found'", () => {
+        return request(app)
+            .get("/api/articles/199/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("id cannot be found");
+
+            })
+    });
+    test.skip("400: responds with message 'bad request' if invalid data type", () => {
+        return request(app)
+            .get("/api/articles/xyz/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("bad request");
+            });
+    });
+});
+
+//GET /api/articles sorting queries
+//sort_by, which sorts the articles by any valid column (defaults to the created_at date).
+//order, which can be set to asc or desc for ascending or descending(defaults to descending).

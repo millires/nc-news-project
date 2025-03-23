@@ -6,7 +6,8 @@ app.use(express.json());
 const { handlePsqlErrors, handleCustomErrors, handleServerErrors } = require('./error_handler')
 const { getAPI, getTopics, getArticleByID, getArticles,
     getCommentsForArticle, postCommentsForArticle,
-    patchArticleVotes, deleteComment, getUsers } = require("./controllers")
+    patchArticleVotes, deleteComment, getUsers,
+    getArticlesSortedBy } = require("./controllers")
 
 
 app.get("/api", getAPI);
@@ -26,6 +27,8 @@ app.patch("/api/articles/:article_id", patchArticleVotes)
 app.delete("/api/comments/:comment_id", deleteComment)
 
 app.get("/api/users", getUsers)
+
+//app.get("/api/articles?sortby=sort", getArticlesSortedBy)
 
 app.use(handlePsqlErrors);
 
