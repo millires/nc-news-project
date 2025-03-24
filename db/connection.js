@@ -9,8 +9,16 @@ const db = new Pool();
 if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
     throw new Error("No PGDATABASE configured")
 } else { 
-    console.log(`Connected to ${process.env.PGDATABASE}`)
+    console.log(`Connected to ${process.env.PGDATABASE}, ${process.env.DATABASE_URL}`)
 }
 
+const config = {};
 
+if (ENV === "production") {
+    console.log(`Connected to ${ENV}`)
+
+    config.connectionString = process.env.DATABASE_URL;
+    config.max = 2;
+}
+module.exports = new Pool(config);
 module.exports = db;
