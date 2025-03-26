@@ -1,7 +1,7 @@
 const db = require("./db/connection");
 const format = require('pg-format')
 
-const { forEach } = require("./db/data/test-data/articles");
+const { forEach, sort } = require("./db/data/test-data/articles");
 const endpoints = require("./endpoints.json")
 
 const fetchAPI = () => {
@@ -30,27 +30,29 @@ const fetchArticleByID = (articleID) => {
         })
 };
 
-const fetchArticles = () => {
+const fetchArticles = (sortby, orderby) => {
+    let sql = `SELECT 
+                    articles.author, articles.title, articles.article_id,
+                    articles.topic, articles.created_at, articles.votes,
+                    articles.article_img_url, 
+                    COUNT(comments.article_id)::INT AS comment_count
+                FROM articles
+                LEFT JOIN comments
+                ON articles.article_id = comments.article_id
+                GROUP BY
+                    articles.author, articles.title, articles.article_id,
+                    articles.topic, articles.created_at, articles.votes,
+                    articles.article_img_url `
+    console.log(!!sortby)
+    if (!!sortby) {
+        sql += 'ORDER BY created_at DESC;'
+        console.log(sql)
+    }
     return db
-        .query(`SELECT author, title, article_id, topic, 
-                        created_at, votes, article_img_url
-                FROM articles ORDER BY created_at DESC;`)
+        .query(sql)
         .then(({ rows }) => {
+            //console.log(rows)
             return rows
-        })
-        .then((articles) => {
-            return db
-                .query(`SELECT article_id, count(article_id) FROM comments GROUP BY article_id;`)
-                .then(({ rows }) => {
-                    let counts = Object.assign({}, ...(rows.map((row) =>
-                        ({ [row.article_id]: row.count }))))
-
-                    articles.forEach((article) => {
-                        article.comment_count = Number(counts[article.article_id]) || 0
-
-                    })
-                    return articles
-                })
         })
 };
 
@@ -115,8 +117,14 @@ const fetchUsers = () => {
 
 };
 
+const fetchArticlesSortedBy = (sortBy) => {
+
+
+};
+
 module.exports = {
     fetchAPI, fetchTopics, fetchArticleByID, fetchArticles,
     fetchCommentsForArticle, addCommentsForArticle,
-    updateArticleVotes, removeComment, fetchUsers
+    updateArticleVotes, removeComment, fetchUsers,
+    fetchArticlesSortedBy
 };
