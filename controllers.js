@@ -6,6 +6,7 @@ const {
     fetchCommentsForArticle, addCommentsForArticle,
     updateArticleVotes, removeComment, fetchUsers, fetchArticlesSortedBy
 } = require("./models");
+
 const { sort } = require("./db/data/test-data/users");
 
 
